@@ -9,6 +9,11 @@ graph_plots = np.zeros(shape=1)
 
 df = pd.read_csv('transaction.csv')
 
+total_investment = float(df['transaction'].sum())
+mean_investment = float(df['transaction'].mean())
+mode_investment = float(df['transaction'].mode().iloc[0])
+median_investment = float(df['transaction'].median())
+
 def total_amount():
     total = df['transaction'].sum() 
     return total
@@ -45,15 +50,57 @@ def getTransactionRange():
     return transactionRange
 
 with st.sidebar:
-    st.title('NoMoney')
+    st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
+    st.title('Transaction Application')
     choice = st.radio('Navigation',['Dashboard :chart_with_upwards_trend:', 'Update Finance :lower_left_ballpoint_pen:', 'Detailed View :computer:', 'Transactions :clipboard:'])
 
 if choice == 'Dashboard :chart_with_upwards_trend:':
     st.title('Dashboard :chart_with_upwards_trend:')
-    fig = plt.figure()
-    plt.plot(getMonthPlot(), getTransactionRange())
-    st.pyplot(plt)
     
+    total1, total2, total3, total4 = st.columns(4, gap='medium')
+
+    with total1:
+        st.info("Total Investment", icon="📌")
+        st.metric(label="Sum ₹", value=f"{total_investment:,.0f}")
+
+    with total2:
+        st.info("Most Frequent", icon="📌")
+        st.metric(label="Mode ₹", value=f"{mode_investment:,.0f}")
+
+    with total3:
+        st.info("Average", icon="📌")
+        st.metric(label="Average ₹", value=f"{mean_investment:,.0f}")
+
+    with total4:
+        st.info("Central Earnings", icon="📌")
+        st.metric(label="Median ₹", value=f"{median_investment:,.0f}")
+    
+    st.markdown("---")
+    
+    # Simple Bar Graph
+    st.subheader("Simple Bar Graph")
+    plt.bar(['Mode', 'Mean', 'Median'], [mode_investment, mean_investment, median_investment])
+    st.pyplot(plt)
+
+    # Line chart divided by category
+    st.subheader("Line Chart by Category")
+    fig, ax = plt.subplots()
+    for category, group in df.groupby('category'):
+        group = group.set_index('date')  # Set date as index for each category
+        group = group.reindex(pd.date_range(group.index.min(), group.index.max(), freq='D'), fill_value=0)  # Fill missing dates with zeros
+        ax.plot(group.index, group['transaction'], label=category)
+    ax.set_title('Line Chart by Category')
+    ax.legend()
+    st.pyplot(fig)
+
+    # Pie Chart by Category
+    st.subheader("Pie Chart by Category")
+    category_sum = df.groupby('category')['transaction'].sum()
+    category_sum = category_sum[category_sum >= 0]  # Exclude negative values
+    plt.pie(category_sum, labels=category_sum.index, autopct='%1.1f%%', startangle=140)
+    plt.axis('equal')
+    st.pyplot(plt)
+
 
 elif choice == 'Update Finance :lower_left_ballpoint_pen:':
     st.title('Update Finance :lower_left_ballpoint_pen:')
@@ -88,7 +135,16 @@ elif choice == 'Detailed View :computer:':
 
 elif choice == 'Transactions :clipboard:':
     st.title('Transactions :clipboard:')
+    st.sidebar.header("Filter Transaction")
+    selected_categories = st.sidebar.multiselect(
+    "Select Transaction Category",
+    options=df["category"].unique()
+    )
+    filtered_df = df[df["category"].isin(selected_categories)]
+    
+    def filter():
+        with st.expander("Tabular"):
+            showData=st.multiselect('Filter : ',filtered_df.columns,default=[])
+            st.write(filtered_df[showData])
+    filter()
     st.data_editor(df, use_container_width=True,num_rows= "dynamic")
-
-
-
