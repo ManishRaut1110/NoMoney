@@ -14,6 +14,8 @@ mean_investment = float(df['transaction'].mean())
 mode_investment = float(df['transaction'].mode().iloc[0])
 median_investment = float(df['transaction'].median())
 
+
+
 def total_amount():
     total = df['transaction'].sum() 
     return total
@@ -50,7 +52,7 @@ def getTransactionRange():
     return transactionRange
 
 with st.sidebar:
-    st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
+    # st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
     st.title('Transaction Application')
     choice = st.radio('Navigation',['Dashboard :chart_with_upwards_trend:', 'Update Finance :lower_left_ballpoint_pen:', 'Detailed View :computer:', 'Transactions :clipboard:'])
 
@@ -68,7 +70,7 @@ if choice == 'Dashboard :chart_with_upwards_trend:':
         st.metric(label="Mode ₹", value=f"{mode_investment:,.0f}")
 
     with total3:
-        st.info("Average", icon="📌")
+        st.info("Average Spending", icon="📌")
         st.metric(label="Average ₹", value=f"{mean_investment:,.0f}")
 
     with total4:
@@ -135,16 +137,22 @@ elif choice == 'Detailed View :computer:':
 
 elif choice == 'Transactions :clipboard:':
     st.title('Transactions :clipboard:')
-    st.sidebar.header("Filter Transaction")
-    selected_categories = st.sidebar.multiselect(
-    "Select Transaction Category",
-    options=df["category"].unique()
-    )
-    filtered_df = df[df["category"].isin(selected_categories)]
     
-    def filter():
-        with st.expander("Tabular"):
-            showData=st.multiselect('Filter : ',filtered_df.columns,default=[])
-            st.write(filtered_df[showData])
-    filter()
+    
+    
+
+with st.expander("Tabular"):
+    selected_categories = st.multiselect(
+    "Select Transaction Category",
+    options=df["category"].unique())
+    filtered_df = df[df["category"].isin(selected_categories)]
+    showData=st.multiselect('Filter : ',filtered_df.columns,default=[])
+
+if selected_categories==[]:
     st.data_editor(df, use_container_width=True,num_rows= "dynamic")
+else: 
+    if showData==[]:
+        st.dataframe(filtered_df)
+    else:
+        st.dataframe(filtered_df[showData])
+
