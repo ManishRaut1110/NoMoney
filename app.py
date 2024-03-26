@@ -5,6 +5,45 @@ import numpy as np
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+
+page_bg_img = """
+<style>
+
+[data-testid="stAppViewContainer"]{
+background-image: url("https://wallpaperaccess.com/full/1372891.jpg");
+backgroung-size: cover;
+}
+[data-testid="stSidebarContent"]{
+background-image: url("https://www.capitalregionques.org/wp-content/uploads/2018/04/sidebar-bg.jpg");
+backgroung-size: cover;
+}
+
+[data-testid="stHeader"]{
+background-image: url("https://www.capitalregionques.org/wp-content/uploads/2018/04/sidebar-bg.jpg");
+backgroung-size: cover;
+}
+[data-testid="stSidebarUserContent"]{
+ 
+
+  position: relative;
+  width: 336px;
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.31);
+  border: 1px solid rgba(255, 255, 255, 0.089);
+  cursor: pointer;
+}
+</style>
+"""
+
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
+
 graph_plots = np.zeros(shape=1)
 
 df = pd.read_csv('transaction.csv')
@@ -52,8 +91,8 @@ def getTransactionRange():
     return transactionRange
 
 with st.sidebar:
-    # st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
-    st.title('Transaction Application')
+    st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
+    st.header('Transaction Application')
     choice = st.radio('Navigation',['Dashboard :chart_with_upwards_trend:', 'Update Finance :lower_left_ballpoint_pen:', 'Detailed View :computer:', 'Transactions :clipboard:'])
 
 if choice == 'Dashboard :chart_with_upwards_trend:':
@@ -86,7 +125,6 @@ if choice == 'Dashboard :chart_with_upwards_trend:':
         else:
             st.header(f':red[{median_investment}]')
     
-    st.markdown("---")
     
     # Simple Bar Graph
     st.subheader("Simple Bar Graph")
