@@ -9,10 +9,10 @@ graph_plots = np.zeros(shape=1)
 
 df = pd.read_csv('transaction.csv')
 
-total_investment = float(df['transaction'].sum())
-mean_investment = float(df['transaction'].mean())
-mode_investment = float(df['transaction'].mode().iloc[0])
-median_investment = float(df['transaction'].median())
+total_investment = round(float(df['transaction'].sum()), 2)
+mean_investment = round(float(df['transaction'].mean()), 2)
+mode_investment = round(float(df['transaction'].mode().iloc[0]), 2)
+median_investment = round(float(df['transaction'].median()), 2)
 
 
 
@@ -63,19 +63,28 @@ if choice == 'Dashboard :chart_with_upwards_trend:':
 
     with total1:
         st.info("Total Investment", icon="📌")
-        st.metric(label="Sum ₹", value=f"{total_investment:,.0f}")
+        st.header(f':green[{total_investment}]')
 
     with total2:
         st.info("Most Frequent", icon="📌")
-        st.metric(label="Mode ₹", value=f"{mode_investment:,.0f}")
+        if mode_investment>=0: 
+            st.header(f':green[{mode_investment}]')
+        else:
+            st.header(f':red[{mode_investment}]')
 
     with total3:
         st.info("Average Spending", icon="📌")
-        st.metric(label="Average ₹", value=f"{mean_investment:,.0f}")
+        if mean_investment>=0: 
+            st.header(f':green[{mean_investment}]')
+        else:
+            st.header(f':red[{mean_investment}]')
 
     with total4:
         st.info("Central Earnings", icon="📌")
-        st.metric(label="Median ₹", value=f"{median_investment:,.0f}")
+        if median_investment>=0: 
+            st.header(f':green[{median_investment}]')
+        else:
+            st.header(f':red[{median_investment}]')
     
     st.markdown("---")
     
