@@ -5,45 +5,6 @@ import numpy as np
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-
-page_bg_img = """
-<style>
-
-[data-testid="stAppViewContainer"]{
-background-image: url("https://wallpaperaccess.com/full/1372891.jpg");
-backgroung-size: cover;
-}
-[data-testid="stSidebarContent"]{
-background-image: url("https://www.capitalregionques.org/wp-content/uploads/2018/04/sidebar-bg.jpg");
-backgroung-size: cover;
-}
-
-[data-testid="stHeader"]{
-background-image: url("https://www.capitalregionques.org/wp-content/uploads/2018/04/sidebar-bg.jpg");
-backgroung-size: cover;
-}
-[data-testid="stSidebarUserContent"]{
- 
-
-  position: relative;
-  width: 336px;
-  height: 130px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 10px;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.31);
-  border: 1px solid rgba(255, 255, 255, 0.089);
-  cursor: pointer;
-}
-</style>
-"""
-
-st.markdown(page_bg_img, unsafe_allow_html=True)
-
-
 graph_plots = np.zeros(shape=1)
 
 df = pd.read_csv('transaction.csv')
@@ -91,9 +52,9 @@ def getTransactionRange():
     return transactionRange
 
 with st.sidebar:
-    st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
-    st.header('Transaction Application')
-    choice = st.radio('Navigation',['Dashboard :chart_with_upwards_trend:', 'Update Finance :lower_left_ballpoint_pen:', 'Detailed View :computer:', 'Transactions :clipboard:'])
+    # st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
+    st.title('Transaction Application')
+    choice = st.radio('Navigation',['Dashboard :chart_with_upwards_trend:', 'Update Finance :lower_left_ballpoint_pen:', 'Transactions :clipboard:'])
 
 if choice == 'Dashboard :chart_with_upwards_trend:':
     st.title('Dashboard :chart_with_upwards_trend:')
@@ -102,7 +63,10 @@ if choice == 'Dashboard :chart_with_upwards_trend:':
 
     with total1:
         st.info("Total Investment", icon="📌")
-        st.header(f':green[{total_investment}]')
+        if total_investment>=0: 
+            st.header(f':green[{total_investment}]')
+        else:
+            st.header(f':red[{total_investment}]')
 
     with total2:
         st.info("Most Frequent", icon="📌")
@@ -125,29 +89,28 @@ if choice == 'Dashboard :chart_with_upwards_trend:':
         else:
             st.header(f':red[{median_investment}]')
     
+    st.markdown("---")
     
     # Simple Bar Graph
-    st.subheader("Simple Bar Graph")
-    plt.bar(['Mode', 'Mean', 'Median'], [mode_investment, mean_investment, median_investment])
-    st.pyplot(plt)
+    df['date'] = pd.to_datetime(df['date'])
 
-    # Line chart divided by category
-    st.subheader("Line Chart by Category")
-    fig, ax = plt.subplots()
-    for category, group in df.groupby('category'):
-        group = group.set_index('date')  # Set date as index for each category
-        group = group.reindex(pd.date_range(group.index.min(), group.index.max(), freq='D'), fill_value=0)  # Fill missing dates with zeros
-        ax.plot(group.index, group['transaction'], label=category)
-    ax.set_title('Line Chart by Category')
-    ax.legend()
-    st.pyplot(fig)
+# Group transactions by date and category, and sum them up
+    df_grouped = df.groupby(['date', 'category'])['transaction'].sum().unstack(fill_value=0)
 
-    # Pie Chart by Category
-    st.subheader("Pie Chart by Category")
-    category_sum = df.groupby('category')['transaction'].sum()
-    category_sum = category_sum[category_sum >= 0]  # Exclude negative values
-    plt.pie(category_sum, labels=category_sum.index, autopct='%1.1f%%', startangle=140)
-    plt.axis('equal')
+    # Plotting
+    plt.figure(figsize=(10, 6))
+
+    # Plot each category as a separate line
+    for category in df_grouped.columns:
+        plt.plot(df_grouped.index, df_grouped[category], marker='o', linestyle='-', label=category)
+
+    plt.title('Transaction Trend by Category')
+    plt.xlabel('Date')
+    plt.ylabel('Transaction Amount')
+    plt.xticks(rotation=45)
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
     st.pyplot(plt)
 
 
@@ -178,28 +141,21 @@ elif choice == 'Update Finance :lower_left_ballpoint_pen:':
             df = pd.concat([df, new_row], ignore_index=True)
             df.to_csv('transaction.csv', index=False)
 
-
-elif choice == 'Detailed View :computer:':
-    st.title('Detailed View :computer:')
-
 elif choice == 'Transactions :clipboard:':
     st.title('Transactions :clipboard:')
-    
-    
-    
 
-with st.expander("Tabular"):
-    selected_categories = st.multiselect(
-    "Select Transaction Category",
-    options=df["category"].unique())
-    filtered_df = df[df["category"].isin(selected_categories)]
-    showData=st.multiselect('Filter : ',filtered_df.columns,default=[])
+    with st.expander("Tabular"):
+        selected_categories = st.multiselect(
+        "Select Transaction Category",
+        options=df["category"].unique())
+        filtered_df = df[df["category"].isin(selected_categories)]
+        showData=st.multiselect('Filter : ',filtered_df.columns,default=[])
 
-if selected_categories==[]:
-    st.data_editor(df, use_container_width=True,num_rows= "dynamic")
-else: 
-    if showData==[]:
-        st.dataframe(filtered_df)
-    else:
-        st.dataframe(filtered_df[showData])
+    if selected_categories==[]:
+        st.data_editor(df, use_container_width=True,num_rows= "dynamic")
+    else: 
+        if showData==[]:
+            st.dataframe(filtered_df)
+        else:
+            st.dataframe(filtered_df[showData])
 
