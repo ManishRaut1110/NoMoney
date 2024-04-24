@@ -5,6 +5,42 @@ import numpy as np
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+# page_bg_img = """
+# <style>
+# [data-testid="stAppViewContainer"]{
+# background-image: url("https://images.unsplash.com/photo-1605710345595-9929bc7912ca?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+# backgroung-size: cover;
+# background-position: center;
+# }
+# [data-testid="stSidebarContent"]{
+# background-image: url("https://images.unsplash.com/photo-1548697143-6a9dc9d9d80f?q=80&w=1776&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+# backgroung-size: cover;
+# }
+# [data-testid="stHeader"]{
+# background-image: url("https://images.unsplash.com/photo-1605710345595-9929bc7912ca?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+# backgroung-size: cover;
+# }
+# [data-testid="stSidebarUserContent"]{
+ 
+#   position: relative;
+#   width: 336px;
+#   height: 130px;
+#   display: flex;
+#   flex-direction: column;
+#   align-items: center;
+#   justify-content: space-between;
+#   padding: 20px 10px;
+#   border-radius: 10px;
+#   background-color: rgba(0, 0, 0, 0.31);
+#   border: 1px solid rgba(255, 255, 255, 0.089);
+#   cursor: pointer;
+# }
+# </style>
+# """
+
+# st.markdown(page_bg_img, unsafe_allow_html=True)
+
+
 graph_plots = np.zeros(shape=1)
 
 df = pd.read_csv('transaction.csv')
@@ -52,7 +88,7 @@ def getTransactionRange():
     return transactionRange
 
 with st.sidebar:
-    # st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
+    st.image('Resource/MIT-WPU-logo-419026232.png', use_column_width=True)
     st.title('Transaction Application')
     choice = st.radio('Navigation',['Dashboard :chart_with_upwards_trend:', 'Update Finance :lower_left_ballpoint_pen:', 'Transactions :clipboard:'])
 
@@ -89,8 +125,6 @@ if choice == 'Dashboard :chart_with_upwards_trend:':
         else:
             st.header(f':red[{median_investment}]')
     
-    st.markdown("---")
-    
     # Simple Bar Graph
     df['date'] = pd.to_datetime(df['date'])
 
@@ -104,7 +138,7 @@ if choice == 'Dashboard :chart_with_upwards_trend:':
     for category in df_grouped.columns:
         plt.plot(df_grouped.index, df_grouped[category], marker='o', linestyle='-', label=category)
 
-    plt.title('Transaction Trend by Category')
+    st.title('Transaction Trend by Category')
     plt.xlabel('Date')
     plt.ylabel('Transaction Amount')
     plt.xticks(rotation=45)
@@ -112,6 +146,39 @@ if choice == 'Dashboard :chart_with_upwards_trend:':
     plt.grid(True)
     plt.tight_layout()
     st.pyplot(plt)
+
+
+    def plot_pie_chart_sorted_by_category(df):
+        category_counts = df['category'].value_counts()
+        category_counts = category_counts.sort_index()
+        
+        plt.figure(figsize=(8, 8))
+        plt.pie(category_counts, labels=category_counts.index, autopct='%1.1f%%', startangle=140)
+        plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+        plt.title('Transaction Distribution by Category')
+        st.pyplot(plt)
+    
+    # Pie chart sorted by category
+    st.title('Transaction Distribution by Category')
+    plot_pie_chart_sorted_by_category(df)
+
+    def plot_bar_chart_sorted_by_category(df):
+        category_counts = df['category'].value_counts()
+        category_counts = category_counts.sort_index()
+        
+        plt.figure(figsize=(10, 6))
+        category_counts.plot(kind='bar', color='skyblue')
+        plt.title('Transaction Distribution by Category')
+        plt.xlabel('Category')
+        plt.ylabel('Count')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        st.pyplot(plt)
+
+
+    # Bar chart sorted by category
+    st.title('Transaction Distribution by Category')
+    plot_bar_chart_sorted_by_category(df)
 
 
 elif choice == 'Update Finance :lower_left_ballpoint_pen:':
@@ -158,4 +225,3 @@ elif choice == 'Transactions :clipboard:':
             st.dataframe(filtered_df)
         else:
             st.dataframe(filtered_df[showData])
-
