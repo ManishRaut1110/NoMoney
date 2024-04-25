@@ -5,40 +5,40 @@ import numpy as np
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-# page_bg_img = """
-# <style>
-# [data-testid="stAppViewContainer"]{
-# background-image: url("https://images.unsplash.com/photo-1605710345595-9929bc7912ca?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-# backgroung-size: cover;
-# background-position: center;
-# }
-# [data-testid="stSidebarContent"]{
-# background-image: url("https://images.unsplash.com/photo-1548697143-6a9dc9d9d80f?q=80&w=1776&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-# backgroung-size: cover;
-# }
-# [data-testid="stHeader"]{
-# background-image: url("https://images.unsplash.com/photo-1605710345595-9929bc7912ca?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-# backgroung-size: cover;
-# }
-# [data-testid="stSidebarUserContent"]{
+page_bg_img = """
+<style>
+[data-testid="stAppViewContainer"]{
+background-image: url("https://images.unsplash.com/photo-1605710345595-9929bc7912ca?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+backgroung-size: cover;
+background-position: center;
+}
+[data-testid="stSidebarContent"]{
+background-image: url("https://images.unsplash.com/photo-1548697143-6a9dc9d9d80f?q=80&w=1776&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+backgroung-size: cover;
+}
+[data-testid="stHeader"]{
+background-image: url("https://images.unsplash.com/photo-1605710345595-9929bc7912ca?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+backgroung-size: cover;
+}
+[data-testid="stSidebarUserContent"]{
  
-#   position: relative;
-#   width: 336px;
-#   height: 130px;
-#   display: flex;
-#   flex-direction: column;
-#   align-items: center;
-#   justify-content: space-between;
-#   padding: 20px 10px;
-#   border-radius: 10px;
-#   background-color: rgba(0, 0, 0, 0.31);
-#   border: 1px solid rgba(255, 255, 255, 0.089);
-#   cursor: pointer;
-# }
-# </style>
-# """
+  position: relative;
+  width: 336px;
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.31);
+  border: 1px solid rgba(255, 255, 255, 0.089);
+  cursor: pointer;
+}
+</style>
+"""
 
-# st.markdown(page_bg_img, unsafe_allow_html=True)
+st.markdown(page_bg_img, unsafe_allow_html=True)
 
 
 graph_plots = np.zeros(shape=1)
